@@ -1,0 +1,35 @@
+version: "3.5"
+
+services:
+  app:
+    build:
+      context: .      
+      dockerfile: Dockerfile
+    image: crud-api
+    volumes:
+      - .:/app
+    restart: unless-stopped
+    tty: true
+    networks:
+      - default
+    ports:
+      - 127.0.0.1:${PORT:-3000}:3000
+    environment:
+      NODE_ENV: development
+      MONGO_URL: ${MONGO_URL}
+    command: yarn start
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongodb:
+networks:
+  default:
+    driver: bridge
